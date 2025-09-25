@@ -9,8 +9,8 @@
     "splashImageUrl": "https://wallet-health-omega.vercel.app/splash.png",
     "splashBackgroundColor": "#111111",
     "webhookUrl": "https://wallet-health-omega.vercel.app/api/webhook",
-    "subtitle": "Know your wallet strength and \"mint\" it.",
-    "description": "Mint your exclusive Gold, Silver, or Bronze NFT and instantly unlock premier access to the most powerful features of the Wallet Strength financial ecosystem. Beyond a collectible, your NFT is the key to maximizing your financial potential.",
+    "subtitle": "Mint The Strength",
+    "description": "Mint your exclusive Gold, Silver, or Bronze NFT",
     "primaryCategory": "utility",
     "tagline": "Know your wallet strength"
   },
