@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=390, initial-scale=1.0">
+<title>Wallet Strength Badge | Mint</title>
+
+<meta name="fc:miniapp" content='{
+  "version":"1",
+  "imageUrl":"https://yourdomain.com/preview.png",
+  "button":{
+    "title":"Wallet Strength",
+    "action":{
+      "type":"launch_frame",
+      "name":"Wallet Strength",
+      "url":"https://yourdomain.com",
+      "splashImageUrl":"https://yourdomain.com/splash.png",
+      "splashBackgroundColor":"#111111"
+    }
+  }
+}'>
+
+<style>
+/* --- BASE STYLES & BACKGROUND --- */
+body {
+  margin: 0;
+  /* Deep, vibrant purple/dark gradient base */
+  background: radial-gradient(circle at top left, #1a0f2b 0%, #0d0d1a 100%); 
+  color: #e0e0e0;
+  font-family: 'Inter', system-ui, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  max-width: 390px;
+  margin-inline: auto;
+  padding: 0; 
+  overflow: hidden; 
+  position: relative;
+}
+
+/* --- FLOATING BACKGROUND SHAPES (GLOBAL) --- */
+.floating-shape {
+  position: absolute;
+  filter: blur(100px); 
+  opacity: 0.7; 
+  animation: float 20s infinite linear alternate;
+  border-radius: 50%;
+  z-index: -1; 
+}
+.shape-1 {
+  width: 250px; height: 250px; background-color: rgba(255, 179, 0, 0.4); top: 10%; left: -50%; animation-duration: 25s;
+}
+.shape-2 {
+  width: 300px; height: 300px; background-color: rgba(0, 255, 255, 0.3); bottom: 5%; right: -50%; animation-delay: -10s; animation-duration: 30s;
+}
+@keyframes float {
+  0% { transform: translate(0, 0) scale(1.0); }
+  50% { transform: translate(50px, 80px) scale(1.1); }
+  100% { transform: translate(-30px, -40px) scale(0.9); }
+}
+
+/* --- CAROUSEL STYLES --- */
+#carousel-wrapper {
+    width: 100%;
+    overflow: hidden; 
+}
+#carousel-container {
+    display: flex;
+    width: 400%; 
+    transition: transform 0.5s ease-in-out;
+}
+.slide {
+    width: 390px; 
+    flex-shrink: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px;
+    box-sizing: border-box;
+    text-align: center;
+}
+.slide h2 { font-size: 2rem; color: #ffde6a; margin-top: 60px; margin-bottom: 20px; }
+.slide p { font-size: 1.1rem; line-height: 1.6; max-width: 300px; }
+.slide .slide-icon { font-size: 80px; margin: 40px 0; color: #ffd166; }
+
+/* Carousel dots */
+#dots-container {
+    position: fixed; bottom: 80px; display: flex; gap: 8px; z-index: 100;
+}
+.dot {
+    width: 10px; height: 10px; border-radius: 50%; background: rgba(255, 255, 255, 0.4); transition: background 0.3s; cursor: pointer;
+}
+.dot.active {
+    background: #ffde6a; width: 24px; border-radius: 5px;
+}
+
+/* --- AWESOME MINT PAGE (SLIDE 4) STYLES --- */
+#slide-4 {
+    justify-content: center; /* Center content vertically */
+}
+#slide-4 h1 { 
+    font-size: 1.8rem; margin-bottom: 30px; color: #ffde6a; 
+    text-shadow: 0 0 15px rgba(255, 222, 106, 0.5); 
+}
+
+#mint-card {
+    background: rgba(255, 255, 255, 0.05); /* Semi-transparent background */
+    backdrop-filter: blur(5px);
+    border-radius: 20px;
+    padding: 30px 20px;
+    width: 100%;
+    max-width: 340px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Stronger shadow for depth */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Pre-Connect Placeholder */
+#wallet-status {
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+#wallet-status .icon {
+    font-size: 50px;
+    color: #ffd166;
+    animation: pulse 2s infinite ease-in-out; /* Pulsing effect */
+}
+#wallet-status p {
+    margin-top: 10px;
+    color: #999;
+    font-weight: 500;
+}
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.8; }
+}
+
+/* Button Styling (Retained) */
+.btn {
+  padding: 16px;
+  background: linear-gradient(90deg, #ffde6a, #ffb300); 
+  color: #1a0f2b; 
+  border: none;
+  border-radius: 14px; 
+  font-weight: 800; 
+  letter-spacing: 0.8px; 
+  cursor: pointer;
+  width: 100%; 
+  margin: 14px 0; /* Adjusted margin for new container */
+  display: block;
+  transition: all .3s ease;
+  box-shadow: 0 6px 20px rgba(255, 179, 0, 0.6); 
+}
+.btn:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 10px 25px rgba(255, 179, 0, 0.8); }
+.btn:disabled { background: #333344; color: #888899; cursor: not-allowed; box-shadow: none; transform: none; }
+
+/* Badge Display (Enhanced) */
+#badgeImg {
+  width: 180px; height: 180px; margin: 30px auto; display: none; border-radius: 50%; 
+  border: 5px solid #444; /* Thicker border */
+  box-shadow: none;
+  transition: transform .7s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity .5s ease; 
+  opacity: 0; transform: scale(0.5) rotateY(180deg);
+}
+#badgeImg.show { display: block; opacity: 1; transform: scale(1) rotateY(0deg); }
+
+/* Toast Styling (Retained) */
+.toast {
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+  background: rgba(10, 10, 20, 0.85); backdrop-filter: blur(10px);
+  color: #fff; border-radius: 16px; padding: 12px 20px; font-weight: 600;
+  max-width: 340px; width: calc(100% - 40px); display: none; z-index: 999;
+  border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+.toast.show { display: block; animation: slideInUp .3s ease; }
+@keyframes slideInUp { from {opacity:0; transform:translate(-50%, 30px)} to {opacity:1; transform:translate(-50%, 0)} }
+</style>
+</head>
+<body>
+
+<div class="floating-shape shape-1"></div>
+<div class="floating-shape shape-2"></div>
+
+<div id="carousel-wrapper">
+    <div id="carousel-container">
+        <div id="slide-1" class="slide">
+            <span class="slide-icon">🔗</span>
+            <h2>Verify Your Wallet Strength</h2>
+            <p>We analyze your on-chain activity on Base to determine your Wallet Strength level. It's time to claim your legacy!</p>
+        </div>
+
+        <div id="slide-2" class="slide">
+            <span class="slide-icon">🏆</span>
+            <h2>Earn Your Rank</h2>
+            <p>From **Bronze** for the active to **Gold** for the whales—your transaction history defines your tier. Know where you stand.</p>
+        </div>
+
+        <div id="slide-3" class="slide">
+            <span class="slide-icon">⚡️</span>
+            <h2>Mint Your Legacy NFT</h2>
+            <p>Once your rank is determined, mint an exclusive ERC-1155 NFT badge to permanently display your Wallet Strength on Farcaster.</p>
+            <button id="getStartedBtn" class="btn" style="margin-top: 40px;">Get Started →</button>
+        </div>
+
+        <div id="slide-4" class="slide">
+            <h1>Claim Your Strength</h1>
+            
+            <div id="mint-card">
+                <div id="wallet-status">
+                    <span id="status-icon" class="icon">🔒</span>
+                    <p id="status-text">Connect your wallet to begin</p>
+                </div>
+
+                <img id="badgeImg" src="" alt="Your Badge">
+                
+                <button id="connectBtn" class="btn">Connect Wallet</button>
+                <button id="getBadgeBtn" class="btn" disabled>Know My Badge</button>
+                <button id="mintBtn" class="btn" disabled>Mint Badge</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="dots-container">
+    <div class="dot active" data-slide="0"></div>
+    <div class="dot" data-slide="1"></div>
+    <div class="dot" data-slide="2"></div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script type="module">
+import { sdk } from 'https://esm.sh/@farcaster/miniapp-sdk';
+import { createConfig, connect, writeContract, getAccount, http } from 'https://esm.sh/@wagmi/core';
+import { base } from 'https://esm.sh/@wagmi/core/chains';
+import { farcasterMiniApp } from 'https://esm.sh/@farcaster/miniapp-wagmi-connector';
+
+// ----- CONFIG (RETAINED) -----
+const BASE_CONTRACT_ADDRESS = 'YOUR_BASE_CONTRACT_ADDRESS';
+const BASE_CONTRACT_ABI = [/* paste your ERC1155 ABI here */];
+const API_KEY = 'YOUR_API_KEY'; 
+const API_ENDPOINT = `https://api.basescan.org/api?module=account&action=txlist&address=`;
+
+sdk.actions.ready({ disableNativeGestures: true });
+
+// --- Carousel Elements ---
+const carouselContainer = document.getElementById('carousel-container');
+const dots = document.querySelectorAll('.dot');
+const getStartedBtn = document.getElementById('getStartedBtn');
+let currentSlide = 0;
+const totalSlides = 4;
+
+// --- Mint Page Elements ---
+const toastEl = document.getElementById('toast');
+const connectBtn = document.getElementById('connectBtn');
+const getBadgeBtn = document.getElementById('getBadgeBtn');
+const badgeImg = document.getElementById('badgeImg');
+const mintBtn = document.getElementById('mintBtn');
+
+// New UI elements
+const walletStatus = document.getElementById('wallet-status');
+const statusIcon = document.getElementById('status-icon');
+const statusText = document.getElementById('status-text');
+
+function showToast(msg, ms=3500) {
+  toastEl.innerHTML = msg;
+  toastEl.classList.add('show');
+  setTimeout(()=>toastEl.classList.remove('show'), ms);
+}
+
+// --- CAROUSEL LOGIC (RETAINED) ---
+function updateCarousel(slideIndex) {
+    currentSlide = Math.min(Math.max(slideIndex, 0), totalSlides - 1);
+    const offset = -currentSlide * 390; 
+    carouselContainer.style.transform = `translateX(${offset}px)`;
+
+    dots.forEach((dot, index) => {
+        dot.classList.remove('active');
+        if (index === currentSlide) {
+            dot.classList.add('active');
+        }
+    });
+
+    if (currentSlide === 3) {
+        document.getElementById('dots-container').style.display = 'none';
+    } else {
+        document.getElementById('dots-container').style.display = 'flex';
+    }
+}
+dots.forEach((dot, index) => {
+    dot.addEventListener('click', () => updateCarousel(index));
+});
+getStartedBtn.onclick = () => updateCarousel(3); 
+
+// --- MINT PAGE LOGIC (UPDATED) ---
+
+function updateWalletStatus(isConnected, address) {
+    if (isConnected) {
+        statusIcon.innerHTML = '✅';
+        statusIcon.style.animation = 'none';
+        statusText.innerText = `Wallet Connected: ${address.substring(0, 6)}...${address.slice(-4)}`;
+        walletStatus.style.marginBottom = '0';
+        getBadgeBtn.style.marginTop = '20px'; // Add space above the button
+    } else {
+        statusIcon.innerHTML = '🔒';
+        statusIcon.style.animation = 'pulse 2s infinite ease-in-out';
+        statusText.innerText = 'Connect your wallet to begin';
+        walletStatus.style.marginBottom = '20px';
+        getBadgeBtn.style.marginTop = '14px';
+    }
+}
+
+function updateBadgeStyle(id) {
+    let color, shadow;
+    switch (id) {
+        case 2: // Gold
+            color = '#FFD700';
+            // Stronger gold trophy glow
+            shadow = '0 0 30px rgba(255, 215, 0, 1), 0 0 20px rgba(255, 215, 0, 0.8)';
+            break;
+        case 1: // Silver
+            color = '#C0C0C0';
+            shadow = '0 0 30px rgba(192, 192, 192, 1), 0 0 20px rgba(192, 192, 192, 0.8)';
+            break;
+        case 0: // Bronze
+        default:
+            color = '#CD7F32';
+            shadow = '0 0 30px rgba(205, 127, 50, 1), 0 0 20px rgba(205, 127, 50, 0.8)';
+            break;
+    }
+    badgeImg.style.borderColor = color;
+    badgeImg.style.boxShadow = shadow;
+    // Hide status when badge is shown
+    walletStatus.style.display = 'none';
+}
+
+let userAddress;
+let badgeId;
+
+// ----- CONNECT WALLET -----
+const config = createConfig({ chains:[base], transports:{ [base.id]:http() } });
+connectBtn.onclick = async () => {
+  try {
+    await connect(config, { connector: farcasterMiniApp() });
+    userAddress = getAccount(config)?.address;
+    if(userAddress) {
+      showToast('✅ Wallet connected');
+      connectBtn.disabled = true;
+      getBadgeBtn.disabled = false;
+      updateWalletStatus(true, userAddress); // Update UI on success
+    }
+  } catch(e) { showToast('❌ Connect failed'); console.error(e); }
+};
+
+// ----- GET BADGE -----
+getBadgeBtn.onclick = async () => {
+  if(!userAddress) return;
+  showToast('⏳ Fetching badge...');
+  getBadgeBtn.disabled = true;
+  try {
+    // Hide badge while fetching new data if it was previously shown
+    badgeImg.classList.remove('show');
+    
+    const res = await fetch(`${API_ENDPOINT}${userAddress}&apikey=${API_KEY}`);
+    const data = await res.json();
+    const txCount = data.result?.length || 0;
+
+    // determine badge 
+    if(txCount >= 5000) badgeId = 2;        // Gold
+    else if(txCount >= 1000) badgeId = 1;  // Silver
+    else badgeId = 0;                        // Bronze
+
+    updateBadgeStyle(badgeId); 
+    badgeImg.src = `${badgeId}.png`;
+    badgeImg.classList.add('show');
+    mintBtn.disabled = false;
+    showToast(`🎉 You earned ${['Bronze','Silver','Gold'][badgeId]} badge!`);
+  } catch(e) { 
+    showToast('❌ Failed to fetch badge'); 
+    getBadgeBtn.disabled = false;
+    console.error(e); 
+  }
+};
+
+// ----- MINT BADGE -----
+mintBtn.onclick = async () => {
+  if(!userAddress || badgeId === undefined) return;
+  mintBtn.disabled = true;
+  try {
+    const txHash = await writeContract(config, {
+      address: BASE_CONTRACT_ADDRESS,
+      abi: BASE_CONTRACT_ABI,
+      functionName: 'mintBadge',
+      args: [userAddress, badgeId]
+    });
+    showToast(`🎉 Badge minted! <a href="https://basescan.org/tx/${txHash}" target="_blank">View TX</a>`, 5000);
+  } catch(e) {
+    showToast('❌ Mint failed');
+    mintBtn.disabled = false;
+    console.error(e);
+  }
+};
+// Initial status update on load
+updateWalletStatus(false, ''); 
+</script>
+
+</body>
+</html>
