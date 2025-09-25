@@ -22,8 +22,16 @@
 
 <style>
 /* --- BASE STYLES & BACKGROUND (UPDATED for screen fit) --- */
-body {
+/* --- BASE STYLES & BACKGROUND (FIXED, no scroll) --- */
+html, body {
   margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100dvh;   /* lock viewport height */
+  overflow: hidden; /* disable scrolling */
+}
+
+body {
   /* Deep, vibrant purple/dark gradient base */
   background: radial-gradient(circle at top left, #1a0f2b 0%, #0d0d1a 100%); 
   color: #e0e0e0;
@@ -31,12 +39,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* Use dynamic viewport height and ensure no scrolling */
-  min-height: 100dvh; 
-  width: 100%;
-  margin-inline: auto;
-  padding: 0; 
-  overflow: hidden; /* **PREVENTS SCROLLING** */
+  justify-content: flex-start;
   position: relative;
 }
 
@@ -61,32 +64,33 @@ body {
   100% { transform: translate(-30px, -40px) scale(0.9); }
 }
 
-/* --- CAROUSEL STYLES (UPDATED for screen fit) --- */
+/* --- CAROUSEL STYLES (LOCKED FULL SCREEN) --- */
 #carousel-wrapper {
     width: 100%;
-    overflow: hidden; 
+    height: 100dvh;       /* full screen height */
+    overflow: hidden;     /* disable scroll */
 }
 #carousel-container {
     display: flex;
-    /* This width will be calculated in JS based on viewport */
     width: 400vw; 
+    height: 100dvh;       /* full screen */
     transition: transform 0.5s ease-in-out;
 }
 .slide {
-    /* Use 100vw for width to ensure correct calculation on any device */
     width: 100vw; 
+    height: 100dvh;       /* each slide fills screen */
     flex-shrink: 0;
-    min-height: 100dvh; /* Use dynamic height for better fit */
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center; /* keep content centered */
     padding: 24px;
     box-sizing: border-box;
     text-align: center;
 }
-.slide h2 { font-size: 2rem; color: #ffde6a; margin-top: 60px; margin-bottom: 20px; }
+.slide h2 { font-size: 2rem; color: #ffde6a; margin-bottom: 20px; }
 .slide p { font-size: 1.1rem; line-height: 1.6; max-width: 300px; }
-.slide .slide-icon { font-size: 80px; margin: 40px 0; color: #ffd166; }
+.slide .slide-icon { font-size: 80px; margin: 20px 0; color: #ffd166; }
 
 /* Carousel dots */
 #dots-container {
@@ -101,7 +105,7 @@ body {
 
 /* --- AWESOME MINT PAGE (SLIDE 4) STYLES --- */
 #slide-4 {
-    justify-content: center; /* Center content vertically */
+    justify-content: center;
 }
 #slide-4 h1 { 
     font-size: 1.8rem; margin-bottom: 30px; color: #ffde6a; 
@@ -109,13 +113,13 @@ body {
 }
 
 #mint-card {
-    background: rgba(255, 255, 255, 0.05); /* Semi-transparent background */
+    background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(5px);
     border-radius: 20px;
     padding: 30px 20px;
     width: 100%;
     max-width: 340px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Stronger shadow for depth */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -131,7 +135,7 @@ body {
 #wallet-status .icon {
     font-size: 50px;
     color: #ffd166;
-    animation: pulse 2s infinite ease-in-out; /* Pulsing effect */
+    animation: pulse 2s infinite ease-in-out;
 }
 #wallet-status p {
     margin-top: 10px;
@@ -144,7 +148,7 @@ body {
     100% { transform: scale(1); opacity: 0.8; }
 }
 
-/* Button Styling (Retained) */
+/* Button Styling */
 .btn {
   padding: 16px;
   background: linear-gradient(90deg, #ffde6a, #ffb300); 
@@ -155,7 +159,7 @@ body {
   letter-spacing: 0.8px; 
   cursor: pointer;
   width: 100%; 
-  margin: 14px 0; /* Adjusted margin for new container */
+  margin: 14px 0; 
   display: block;
   transition: all .3s ease;
   box-shadow: 0 6px 20px rgba(255, 179, 0, 0.6); 
@@ -163,17 +167,16 @@ body {
 .btn:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 10px 25px rgba(255, 179, 0, 0.8); }
 .btn:disabled { background: #333344; color: #888899; cursor: not-allowed; box-shadow: none; transform: none; }
 
-/* Badge Display (Enhanced) */
+/* Badge Display */
 #badgeImg {
   width: 180px; height: 180px; margin: 30px auto 10px; display: none; border-radius: 50%; 
-  border: 5px solid #444; /* Thicker border */
+  border: 5px solid #444; 
   box-shadow: none;
   transition: transform .7s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity .5s ease; 
   opacity: 0; transform: scale(0.5) rotateY(180deg);
 }
 #badgeImg.show { display: block; opacity: 1; transform: scale(1) rotateY(0deg); }
 
-/* Badge Text Style (NEW) */
 .badge-text {
   font-size: 1.2rem;
   font-weight: 700;
@@ -183,8 +186,7 @@ body {
   display: none;
 }
 
-
-/* Toast Styling (Retained) */
+/* Toast Styling */
 .toast {
   position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
   background: rgba(10, 10, 20, 0.85); backdrop-filter: blur(10px);
