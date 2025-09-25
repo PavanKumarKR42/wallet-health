@@ -1,20 +1,22 @@
 {
-    
-  "accountAssociation": {
-    "header": "eyJmaWQiOjI4NDcxMywidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweDBDN2FmZDk5OEY1MDY5ZkM1RTMxZWVmREM2RkZBODdlMzExYWIyM0MifQ",
-    "payload": "eyJkb21haW4iOiJ3YWxsZXQtaGVhbHRoLW9tZWdhLnZlcmNlbC5hcHAifQ",
-    "signature": "MHhmMDdmNmUyMDM4ZjI3ZmQwODdmZTc4ZGY3M2I5NGZlMzU4YTEwYmZlMzcwZDY2MjUyZGQ1YzY1YTBhZDQwYjc2NDI5NGE2ZDA0OTUwOTk1MmY5N2RkNjQzZDVjNTFiYjI1YTRjNzU0NDZjYmM5NDEyMDljMWMyNmRmMDk2NTIzMDFj"
-  },
-  
   "frame": {
-    "version": "1",
     "name": "Wallet-Strength",
+    "version": "1",
     "iconUrl": "https://wallet-health-omega.vercel.app/icon.png",
-    "homeUrl": "https://wallet-health-omega.vercel.app/",
+    "homeUrl": "https://wallet-health-omega.vercel.app",
     "imageUrl": "https://wallet-health-omega.vercel.app/image.png",
     "buttonTitle": "Wallet-Strength",
     "splashImageUrl": "https://wallet-health-omega.vercel.app/splash.png",
     "splashBackgroundColor": "#111111",
-    "webhookUrl": "https://flip-to-earn.vercel.app/api/webhook"
+    "webhookUrl": "https://wallet-health-omega.vercel.app/api/webhook",
+    "subtitle": "Know your wallet strength and \"mint\" it.",
+    "description": "Mint your exclusive Gold, Silver, or Bronze NFT and instantly unlock premier access to the most powerful features of the Wallet Strength financial ecosystem. Beyond a collectible, your NFT is the key to maximizing your financial potential.",
+    "primaryCategory": "utility",
+    "tagline": "Know your wallet strength"
+  },
+  "accountAssociation": {
+    "header": "eyJmaWQiOjI4NDcxMywidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweDBDN2FmZDk5OEY1MDY5ZkM1RTMxZWVmREM2RkZBODdlMzExYWIyM0MifQ",
+    "payload": "eyJkb21haW4iOiJ3YWxsZXQtaGVhbHRoLW9tZWdhLnZlcmNlbC5hcHAifQ",
+    "signature": "MHhmMDdmNmUyMDM4ZjI3ZmQwODdmZTc4ZGY3M2I5NGZlMzU4YTEwYmZlMzcwZDY2MjUyZGQ1YzY1YTBhZDQwYjc2NDI5NGE2ZDA0OTUwOTk1MmY5N2RkNjQzZDVjNTFiYjI1YTRjNzU0NDZjYmM5NDEyMDljMWMyNmRmMDk2NTIzMDFj"
   }
 }
