@@ -287,72 +287,47 @@ const connectBtn = document.getElementById('connectBtn');
 const getBadgeBtn = document.getElementById('getBadgeBtn');
 const badgeImg = document.getElementById('badgeImg');
 const mintBtn = document.getElementById('mintBtn');
-const badgeNameEl = document.getElementById('badgeName'); // NEW element
+const badgeNameEl = document.getElementById('badgeName');
 
-// New UI elements
 const walletStatus = document.getElementById('wallet-status');
 const statusIcon = document.getElementById('status-icon');
 const statusText = document.getElementById('status-text');
 
-// --- Window Resize for Carousel Fit ---
+// --- Carousel Resize ---
 function updateCarouselDimensions() {
-    // Get the current visible width to calculate carousel offset correctly
     const slideWidth = window.innerWidth;
-    const offset = -currentSlide * slideWidth; 
-    
-    // Set the overall container width based on the actual viewport width
+    const offset = -currentSlide * slideWidth;
     carouselContainer.style.width = `${totalSlides * slideWidth}px`;
-    
-    // Update individual slide width
-    document.querySelectorAll('.slide').forEach(slide => {
-        slide.style.width = `${slideWidth}px`;
-    });
-    
-    // Apply the offset
+    document.querySelectorAll('.slide').forEach(slide => { slide.style.width = `${slideWidth}px`; });
     carouselContainer.style.transform = `translateX(${offset}px)`;
 }
 window.addEventListener('resize', updateCarouselDimensions);
 
-
+// --- Toast Function ---
 function showToast(msg, ms=3500) {
   toastEl.innerHTML = msg;
   toastEl.classList.add('show');
   setTimeout(()=>toastEl.classList.remove('show'), ms);
 }
 
-// --- CAROUSEL LOGIC ---
+// --- Carousel Logic ---
 function updateCarousel(slideIndex) {
     currentSlide = Math.min(Math.max(slideIndex, 0), totalSlides - 1);
-    // Use the function to calculate the offset based on current screen size
     updateCarouselDimensions();
-
-    dots.forEach((dot, index) => {
-        dot.classList.remove('active');
-        if (index === currentSlide) {
-            dot.classList.add('active');
-        }
-    });
-
-    if (currentSlide === 3) {
-        document.getElementById('dots-container').style.display = 'none';
-    } else {
-        document.getElementById('dots-container').style.display = 'flex';
-    }
+    dots.forEach((dot, index) => dot.classList.toggle('active', index === currentSlide));
+    document.getElementById('dots-container').style.display = currentSlide === 3 ? 'none' : 'flex';
 }
-dots.forEach((dot, index) => {
-    dot.addEventListener('click', () => updateCarousel(index));
-});
+dots.forEach((dot, index) => dot.addEventListener('click', () => updateCarousel(index)));
 getStartedBtn.onclick = () => updateCarousel(3); 
 
-// --- MINT PAGE LOGIC ---
-
+// --- Wallet & Badge UI Updates ---
 function updateWalletStatus(isConnected, address) {
     if (isConnected) {
         statusIcon.innerHTML = '✅';
         statusIcon.style.animation = 'none';
         statusText.innerText = `Wallet Connected: ${address.substring(0, 6)}...${address.slice(-4)}`;
         walletStatus.style.marginBottom = '0';
-        getBadgeBtn.style.marginTop = '20px'; // Add space above the button
+        getBadgeBtn.style.marginTop = '20px';
     } else {
         statusIcon.innerHTML = '🔒';
         statusIcon.style.animation = 'pulse 2s infinite ease-in-out';
@@ -365,31 +340,21 @@ function updateWalletStatus(isConnected, address) {
 function updateBadgeStyle(id) {
     let color, shadow;
     switch (id) {
-        case 2: // Gold
-            color = '#FFD700';
-            // Stronger gold trophy glow
-            shadow = '0 0 30px rgba(255, 215, 0, 1), 0 0 20px rgba(255, 215, 0, 0.8)';
-            break;
-        case 1: // Silver
-            color = '#C0C0C0';
-            shadow = '0 0 30px rgba(192, 192, 192, 1), 0 0 20px rgba(192, 192, 192, 0.8)';
-            break;
-        case 0: // Bronze
-        default:
-            color = '#CD7F32';
-            shadow = '0 0 30px rgba(205, 127, 50, 1), 0 0 20px rgba(205, 127, 50, 0.8)';
-            break;
+        case 2: color = '#FFD700'; shadow = '0 0 30px rgba(255, 215, 0, 1), 0 0 20px rgba(255, 215, 0, 0.8)'; break;
+        case 1: color = '#C0C0C0'; shadow = '0 0 30px rgba(192, 192, 192, 1), 0 0 20px rgba(192, 192, 192, 0.8)'; break;
+        case 0:
+        default: color = '#CD7F32'; shadow = '0 0 30px rgba(205, 127, 50, 1), 0 0 20px rgba(205, 127, 50, 0.8)'; break;
     }
     badgeImg.style.borderColor = color;
     badgeImg.style.boxShadow = shadow;
-    // Hide status when badge is shown
     walletStatus.style.display = 'none';
 }
 
+// --- State ---
 let userAddress;
 let badgeId;
 
-// ----- CONNECT WALLET -----
+// ----- Connect Wallet -----
 const config = createConfig({ chains:[base], transports:{ [base.id]:http() } });
 connectBtn.onclick = async () => {
   try {
@@ -399,22 +364,21 @@ connectBtn.onclick = async () => {
       showToast('✅ Wallet connected');
       connectBtn.disabled = true;
       getBadgeBtn.disabled = false;
-      updateWalletStatus(true, userAddress); // Update UI on success
+      updateWalletStatus(true, userAddress);
     }
   } catch(e) { showToast('❌ Connect failed'); console.error(e); }
 };
 
-// ----- GET BADGE -----
+// ----- Get Badge -----
 getBadgeBtn.onclick = async () => {
   if(!userAddress) return;
   showToast('⏳ Fetching wallet history...');
-  getBadgeBtn.disabled = true;
-  mintBtn.disabled = true; // Disable mint button until status is determined
+  getBadgeBtn.disabled = true; // Disable after click
+  mintBtn.disabled = true;
   badgeImg.classList.remove('show');
   badgeNameEl.style.display = 'none';
 
   try {
-    // 1. Check if the user has already minted
     const hasAlreadyMinted = await readContract(config, {
         address: BASE_CONTRACT_ADDRESS,
         abi: BASE_CONTRACT_ABI,
@@ -422,51 +386,41 @@ getBadgeBtn.onclick = async () => {
         args: [userAddress]
     });
 
-    let mintStatusMessage = '';
-    
-    // 2. Fetch transaction count from Basescan
     const res = await fetch(`${API_ENDPOINT}${userAddress}&apikey=${API_KEY}`);
     const data = await res.json();
     const txCount = data.result?.length || 0;
 
-    // 3. Determine badge level
-    if(txCount >= 5000) badgeId = 2;        // Gold
-    else if(txCount >= 1000) badgeId = 1;  // Silver
-    else badgeId = 0;                       // Bronze
+    if(txCount >= 5000) badgeId = 2;
+    else if(txCount >= 1000) badgeId = 1;
+    else badgeId = 0;
 
-    // 4. Update UI with badge details
     updateBadgeStyle(badgeId); 
     badgeImg.src = `${badgeId}.png`;
     badgeImg.classList.add('show');
-    
-    // NEW: Display the badge name
+
     badgeNameEl.innerText = BADGE_NAMES[badgeId];
     badgeNameEl.style.display = 'block';
+    badgeNameEl.style.textAlign = 'center'; // center
 
-    // 5. Update Mint Button based on mint status
     if (hasAlreadyMinted) {
         mintBtn.disabled = true;
         mintBtn.innerText = 'Badge Already Minted';
-        mintStatusMessage = `✅ You already minted the **${BADGE_NAMES[badgeId]}**!`;
+        showToast(`✅ You already minted the ${BADGE_NAMES[badgeId]}!`);
     } else {
         mintBtn.disabled = false;
         mintBtn.innerText = 'Mint Badge';
-        mintStatusMessage = `🎉 You earned the **${BADGE_NAMES[badgeId]}**! Mint it now.`;
+        showToast(`🎉 You earned the ${BADGE_NAMES[badgeId]}! Mint it now.`);
     }
-
-    showToast(mintStatusMessage);
   } catch(e) { 
     showToast('❌ Failed to fetch badge or mint status'); 
     getBadgeBtn.disabled = false;
     badgeImg.classList.remove('show');
     walletStatus.style.display = 'flex';
     console.error(e); 
-  } finally {
-    getBadgeBtn.disabled = false;
   }
 };
 
-// ----- MINT BADGE -----
+// ----- Mint Badge -----
 mintBtn.onclick = async () => {
   if(!userAddress || badgeId === undefined || mintBtn.disabled) return;
   mintBtn.disabled = true;
@@ -475,14 +429,13 @@ mintBtn.onclick = async () => {
       address: BASE_CONTRACT_ADDRESS,
       abi: BASE_CONTRACT_ABI,
       functionName: 'mintBadge',
-      args: [badgeId]   // only badgeId
+      args: [badgeId]
     });
     mintBtn.innerText = 'Minting...';
     showToast(`⏳ Transaction sent! <a href="https://basescan.org/tx/${txHash}" target="_blank">View TX</a>`, 5000);
     
-    // Wait for the TX to confirm (optional, but good practice for final state)
-    // For simplicity, we'll just set the final state after the call:
-    mintBtn.innerText = 'Badge Already Minted';
+    // After TX success
+    mintBtn.innerText = 'Display Done';
   } catch(e) {
     showToast('❌ Mint failed. You may have already minted a badge.');
     mintBtn.disabled = false;
@@ -491,7 +444,7 @@ mintBtn.onclick = async () => {
   }
 };
 
-// Initial setup on load
+// Initial setup
 updateWalletStatus(false, ''); 
 updateCarouselDimensions(); // Initial call to set correct slide dimensions
 </script>
