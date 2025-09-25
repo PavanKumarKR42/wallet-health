@@ -394,6 +394,7 @@ getBadgeBtn.onclick = async () => {
 };
 
 // ----- MINT BADGE -----
+// ----- MINT BADGE -----
 mintBtn.onclick = async () => {
   if(!userAddress || badgeId === undefined) return;
   mintBtn.disabled = true;
@@ -402,7 +403,7 @@ mintBtn.onclick = async () => {
       address: BASE_CONTRACT_ADDRESS,
       abi: BASE_CONTRACT_ABI,
       functionName: 'mintBadge',
-      args: [userAddress, badgeId]
+      args: [badgeId]   // only badgeId
     });
     showToast(`🎉 Badge minted! <a href="https://basescan.org/tx/${txHash}" target="_blank">View TX</a>`, 5000);
   } catch(e) {
@@ -411,6 +412,7 @@ mintBtn.onclick = async () => {
     console.error(e);
   }
 };
+
 // Initial status update on load
 updateWalletStatus(false, ''); 
 </script>
