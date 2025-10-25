@@ -435,7 +435,7 @@ mintBtn.onclick = async () => {
     showToast(`⏳ Transaction sent! <a href="https://basescan.org/tx/${txHash}" target="_blank">View TX</a>`, 5000);
     
     // After TX success
-    mintBtn.innerText = 'Display Done';
+    mintBtn.innerText = 'Done';
   } catch(e) {
     showToast('❌ Mint failed. You may have already minted a badge.');
     mintBtn.disabled = false;
